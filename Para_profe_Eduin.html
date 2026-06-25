@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pull Request: Día del Maestro</title>
+    <style>
+        :root {
+            --bg-color: #06080f;
+            --card-bg: rgba(14, 20, 36, 0.75);
+            --text-color: #c9d1d9;
+            --accent-color: #2ea44f;
+            --border-color: rgba(48, 54, 61, 0.6);
+            --nebula-1: #1a0533;
+            --nebula-2: #0b1a3a;
+            --star-glow: rgba(150, 180, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ═══════ STARFIELD CANVAS ═══════ */
+        #starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* ═══════ NEBULA LAYERS ═══════ */
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .nebula-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, #5b21b6 0%, transparent 70%);
+            top: -100px; left: -150px;
+            animation: nebulaDrift1 20s ease-in-out infinite;
+        }
+        .nebula-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #1e40af 0%, transparent 70%);
+            bottom: -80px; right: -100px;
+            animation: nebulaDrift2 25s ease-in-out infinite;
+        }
+        .nebula-3 {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, #9333ea 0%, transparent 70%);
+            top: 40%; left: 50%;
+            animation: nebulaDrift3 18s ease-in-out infinite;
+        }
+
+        @keyframes nebulaDrift1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 40px) scale(1.15); }
+        }
+        @keyframes nebulaDrift2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, -30px) scale(1.1); }
+        }
+        @keyframes nebulaDrift3 {
+            0%, 100% { transform: translate(0, 0) scale(0.9); opacity: 0.15; }
+            50% { transform: translate(-30px, 50px) scale(1.1); opacity: 0.3; }
+        }
+
+        /* ═══════ SHOOTING STARS ═══════ */
+        .shooting-star {
+            position: fixed;
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+            border-radius: 2px;
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            left: 0; top: -1px;
+            width: 6px; height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px 2px rgba(200, 220, 255, 0.9);
+        }
+
+        .ss-1 { top: 12%; left: 20%; animation: shoot 4s 1s infinite; transform: rotate(-25deg); }
+        .ss-2 { top: 30%; left: 60%; animation: shoot 5s 3.5s infinite; transform: rotate(-30deg); }
+        .ss-3 { top: 55%; left: 10%; animation: shoot 6s 6s infinite; transform: rotate(-20deg); }
+        .ss-4 { top: 8%; left: 75%; animation: shoot 4.5s 8s infinite; transform: rotate(-35deg); }
+
+        @keyframes shoot {
+            0% { opacity: 0; transform: rotate(var(--angle, -25deg)) translateX(0); }
+            2% { opacity: 1; }
+            15% { opacity: 0; transform: rotate(var(--angle, -25deg)) translateX(500px); }
+            100% { opacity: 0; }
+        }
+        .ss-1 { --angle: -25deg; }
+        .ss-2 { --angle: -30deg; }
+        .ss-3 { --angle: -20deg; }
+        .ss-4 { --angle: -35deg; }
+
+        /* ═══════ MAIN CONTENT ═══════ */
+        .page-wrap {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px 60px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* ═══════ ASTRONAUT SVG ═══════ */
+        .astronaut-wrap {
+            position: absolute;
+            top: -20px;
+            right: -30px;
+            width: 140px;
+            height: 140px;
+            z-index: 10;
+            animation: astroFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(150, 120, 255, 0.3));
+        }
+        @media (max-width: 600px) {
+            .astronaut-wrap {
+                width: 90px; height: 90px;
+                top: -10px; right: 0;
+            }
+        }
+
+        @keyframes astroFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-8px, -14px) rotate(3deg); }
+            50% { transform: translate(4px, -20px) rotate(-2deg); }
+            75% { transform: translate(10px, -8px) rotate(4deg); }
+        }
+
+        /* ═══════ HEADER ═══════ */
+        .header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            animation: fadeSlideDown 0.8s ease-out;
+        }
+
+        .repo-title {
+            font-size: 1.1rem;
+            color: #58a6ff;
+            margin-bottom: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        .pr-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 0 0 14px 0;
+            color: #f0f6fc;
+            text-shadow: 0 0 30px rgba(88, 166, 255, 0.15);
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #2ea44f, #26d96a);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 2em;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 0 16px rgba(46, 164, 79, 0.35);
+            animation: badgePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 16px rgba(46, 164, 79, 0.35); }
+            50% { box-shadow: 0 0 26px rgba(46, 164, 79, 0.55); }
+        }
+
+        /* ═══════ STATS BOX ═══════ */
+        .stats-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 28px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
+            backdrop-filter: blur(12px);
+            animation: fadeSlideDown 0.8s 0.15s ease-out both;
+        }
+        .stats-box .prompt { color: #7ee787; }
+        .stats-box .muted { color: #8b949e; }
+
+        /* ═══════ COMMIT CARDS ═══════ */
+        .grid-commits {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .commit-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 18px;
+            position: relative;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .commit-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease,
+                        border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .commit-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(to bottom, #58a6ff, #a855f7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .commit-card:hover {
+            transform: translateX(6px);
+            border-color: rgba(88, 166, 255, 0.4);
+            box-shadow: 0 4px 24px rgba(88, 166, 255, 0.08);
+        }
+
+        .commit-card:hover::before {
+            opacity: 1;
+        }
+
+        .commit-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px;
+            font-size: 0.82rem;
+            color: #8b949e;
+            margin-bottom: 10px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+
+        .author-name {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+
+        .commit-msg {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e6edf3;
+        }
+
+        /* ═══════ FOOTER ═══════ */
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            color: #8b949e;
+            font-size: 0.82rem;
+            animation: fadeSlideDown 0.8s 0.4s ease-out both;
+        }
+        .footer .heart { color: #f47067; }
+
+        /* ═══════ PLANET DECORATIONS ═══════ */
+        .planet {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .planet-1 {
+            width: 60px; height: 60px;
+            background: radial-gradient(circle at 35% 35%, #6d5daa, #2a1e5c);
+            bottom: 15%; left: 5%;
+            box-shadow: inset -8px -4px 12px rgba(0,0,0,0.5), 0 0 20px rgba(109,93,170,0.2);
+            animation: planetOrbit1 30s linear infinite;
+        }
+        .planet-2 {
+            width: 35px; height: 35px;
+            background: radial-gradient(circle at 40% 30%, #5b8fb9, #1c3a52);
+            top: 25%; right: 4%;
+            box-shadow: inset -5px -3px 8px rgba(0,0,0,0.5), 0 0 14px rgba(91,143,185,0.2);
+            animation: planetOrbit2 22s linear infinite;
+        }
+        .planet-ring {
+            width: 80px; height: 80px;
+            background: radial-gradient(circle at 40% 35%, #c4956a, #6b3e26);
+            top: 60%; left: 88%;
+            box-shadow: inset -10px -5px 14px rgba(0,0,0,0.5), 0 0 18px rgba(196,149,106,0.15);
+            animation: planetOrbit3 35s linear infinite;
+        }
+        .planet-ring::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 130%; height: 30%;
+            border: 2px solid rgba(196,149,106,0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(70deg);
+        }
+
+        @keyframes planetOrbit1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -30px); }
+        }
+        @keyframes planetOrbit2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-15px, 20px); }
+        }
+        @keyframes planetOrbit3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-25px, -15px); }
+        }
+
+        /* ═══════ UTILITIES ═══════ */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Starfield -->
+<canvas id="starfield"></canvas>
+
+<!-- Nebula blobs -->
+<div class="nebula nebula-1"></div>
+<div class="nebula nebula-2"></div>
+<div class="nebula nebula-3"></div>
+
+<!-- Shooting stars -->
+<div class="shooting-star ss-1"></div>
+<div class="shooting-star ss-2"></div>
+<div class="shooting-star ss-3"></div>
+<div class="shooting-star ss-4"></div>
+
+<!-- Planets -->
+<div class="planet planet-1"></div>
+<div class="planet planet-2"></div>
+<div class="planet planet-ring"></div>
+
+<!-- Main content -->
+<div class="page-wrap">
+    <div class="container">
+
+        <div class="header">
+            <!-- Inline SVG Astronaut -->
+            <div class="astronaut-wrap">
+                <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Jet pack flame -->
+                    <ellipse cx="100" cy="210" rx="14" ry="10" fill="#f59e0b" opacity="0.7">
+                        <animate attributeName="ry" values="10;16;10" dur="0.6s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.7;0.4;0.7" dur="0.6s" repeatCount="indefinite"/>
+                    </ellipse>
+                    <ellipse cx="100" cy="210" rx="7" ry="6" fill="#fbbf24">
+                        <animate attributeName="ry" values="6;11;6" dur="0.5s" repeatCount="indefinite"/>
+                    </ellipse>
+
+                    <!-- Backpack / jet pack -->
+                    <rect x="72" y="105" width="56" height="70" rx="10" fill="#6b7280"/>
+                    <rect x="80" y="170" width="14" height="22" rx="4" fill="#4b5563"/>
+                    <rect x="106" y="170" width="14" height="22" rx="4" fill="#4b5563"/>
+
+                    <!-- Body suit -->
+                    <rect x="62" y="85" width="76" height="82" rx="18" fill="#e5e7eb"/>
+                    <rect x="62" y="85" width="76" height="82" rx="18" fill="url(#suitShine)" opacity="0.3"/>
+
+                    <!-- Arms -->
+                    <rect x="30" y="100" width="38" height="22" rx="11" fill="#e5e7eb" transform="rotate(-10 49 111)"/>
+                    <rect x="132" y="100" width="38" height="22" rx="11" fill="#e5e7eb" transform="rotate(10 151 111)"/>
+                    <!-- Gloves -->
+                    <circle cx="32" cy="108" r="10" fill="#d1d5db"/>
+                    <circle cx="170" cy="108" r="10" fill="#d1d5db"/>
+
+                    <!-- Legs -->
+                    <rect x="70" y="155" width="24" height="36" rx="10" fill="#e5e7eb"/>
+                    <rect x="106" y="155" width="24" height="36" rx="10" fill="#e5e7eb"/>
+                    <!-- Boots -->
+                    <rect x="66" y="182" width="30" height="16" rx="8" fill="#9ca3af"/>
+                    <rect x="104" y="182" width="30" height="16" rx="8" fill="#9ca3af"/>
+
+                    <!-- Helmet -->
+                    <circle cx="100" cy="55" r="45" fill="#d1d5db"/>
+                    <circle cx="100" cy="55" r="45" fill="url(#helmetShine)" opacity="0.2"/>
+                    <!-- Visor -->
+                    <ellipse cx="100" cy="58" rx="32" ry="28" fill="url(#visor)"/>
+                    <!-- Visor glare -->
+                    <ellipse cx="88" cy="48" rx="10" ry="6" fill="rgba(255,255,255,0.25)" transform="rotate(-15 88 48)"/>
+
+                    <!-- Antenna -->
+                    <line x1="100" y1="10" x2="100" y2="20" stroke="#9ca3af" stroke-width="2.5"/>
+                    <circle cx="100" cy="8" r="4" fill="#f87171">
+                        <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Chest panel -->
+                    <rect x="86" y="102" width="28" height="18" rx="3" fill="#374151"/>
+                    <rect x="90" y="106" width="8" height="4" rx="1" fill="#34d399"/>
+                    <rect x="101" y="106" width="8" height="4" rx="1" fill="#60a5fa"/>
+                    <rect x="90" y="113" width="20" height="3" rx="1" fill="#6b7280"/>
+
+                    <defs>
+                        <linearGradient id="visor" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3b82f6"/>
+                            <stop offset="50%" stop-color="#8b5cf6"/>
+                            <stop offset="100%" stop-color="#06b6d4"/>
+                        </linearGradient>
+                        <linearGradient id="suitShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="white"/>
+                            <stop offset="100%" stop-color="transparent"/>
+                        </linearGradient>
+                        <linearGradient id="helmetShine" x1="20%" y1="0%" x2="80%" y2="100%">
+                            <stop offset="0%" stop-color="white"/>
+                            <stop offset="100%" stop-color="transparent"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <div class="repo-title">Clase_Progra / Profe_Eduin</div>
+            <h1 class="pr-title">Feliz Día del Maestro!!!</h1>
+            <span class="badge">Merged 🚀</span>
+        </div>
+
+        <div class="stats-box">
+            <span class="prompt">&gt;</span> git log --summary<br>
+            <span class="muted">Commits: 10 &nbsp;|&nbsp; Files changed: 1 (corazon.json) &nbsp;|&nbsp; Additions: ∞</span>
+        </div>
+
+        <div class="grid-commits" id="commits-container"></div>
+
+        <div class="footer">
+            <p>Built with <span class="heart">❤️</span> by Grupo_De_E2 // Profe.code = "¡Gracias por todo!";</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ═══════ STARFIELD ═══════
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    function createStars(count) {
+        stars = [];
+        for (let i = 0; i < count; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.6 + 0.3,
+                alpha: Math.random() * 0.6 + 0.2,
+                speed: Math.random() * 0.012 + 0.003,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    function drawStars(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const s of stars) {
+            const twinkle = Math.sin(time * s.speed + s.phase) * 0.3 + 0.7;
+            const a = s.alpha * twinkle;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(200, 215, 255, ${a})`;
+            ctx.fill();
+            if (s.r > 1.2) {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(180, 200, 255, ${a * 0.1})`;
+                ctx.fill();
+            }
+        }
+        requestAnimationFrame(drawStars);
+    }
+
+    resizeCanvas();
+    createStars(220);
+    requestAnimationFrame(drawStars);
+    window.addEventListener('resize', () => { resizeCanvas(); createStars(220); });
+
+    // ═══════ COMMITS ═══════
+    const colaboradores = [
+        { nombre: "Denise", commit: "💻 feat(gracias): Gracias por tenernos paciencia cuando el código no compila." },
+        { nombre: "Caro", commit: "🚀 feat(futuro): Un buen profesor no solo escribe código en la pizarra, sino que nos enseña a diseñar nuestra propia lógica para resolver la vida. Gracias por ser nuestro mejor compilador." },
+        { nombre: "Dulce", commit: "🛠️ fix(paciencia): Detrás de cada línea de código que hoy logramos dominar, está el tiempo, la dedicación y la guía de un gran maestro. Gracias por no dejarnos tirar la toalla ante ningún error." },
+        { nombre: "Borja", commit: "✨ feat(paciencia): ¡Feliz Día del Maestro, profe Eduin! Gracias por su dedicación, paciencia y por compartir sus conocimientos con tanto entusiasmo. Su enseñanza deja una huella que va más allá del aula. ¡Que tenga un excelente día!" },
+        { nombre: "Antonio", commit: "📚 style(profe): Profe Edwin, gracias por sus clases. Es de esos profes que dejan algo más que tareas. Atte: Toto." },
+        { nombre: "Guillermo", commit: "💡 refactor(vida): Gracias profe por todo el tiempo que empeña en nosotros siempre inspirandonos a ser mejor programadores." },
+        { nombre: "Juan", commit: "👊🏻 feat(conocimiento): Feliz dia profe 👊🏻" },
+        { nombre: "Jeshua", commit: "🤭 test(success): Gracias por ser un profe tan descabellado🤭 feliz día del maestro." },
+        { nombre: "Iker", commit: "🎉 perf(clase): Profe, FELIZ DIA DEL MAESTRO !!! Ha sido un gran maestro, mucha gracias por todo !!" },
+        { nombre: "Pablo", commit: "🧠 docs(inspiracion): gracias profe, gracias por darnos clases todos los dias y por soportando todas las cosas que decimos y hablamos, quiero que sepa que lo queremos y no locambiariamos por otro profesor, por ello y muchas cosas mas, le quiero" }
+    ];
+
+    const container = document.getElementById('commits-container');
+
+    colaboradores.forEach((colab, index) => {
+        const hash = Math.random().toString(16).substring(2, 9);
+        const card = document.createElement('div');
+        card.className = 'commit-card';
+        card.style.transitionDelay = `${index * 0.07}s`;
+        card.innerHTML = `
+            <div class="commit-header">
+                <span>commit ${hash}</span>
+                <span>Author: <span class="author-name">${colab.nombre}</span></span>
+            </div>
+            <div class="commit-msg">${colab.commit}</div>
+        `;
+        container.appendChild(card);
+    });
+
+    // ═══════ SCROLL REVEAL ═══════
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.commit-card').forEach(card => observer.observe(card));
+</script>
+
+</body>
+</html>
