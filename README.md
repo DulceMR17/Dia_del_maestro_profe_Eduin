@@ -3,7 +3,7 @@
 
 > **Status:** Production-ready. No bugs found. 100% Student Satisfaction.
 
-Repositorio dedicado al **Profe Edwin** en el Día del Maestro. Hemos ejecutado un `git commit` masivo para desplegar nuestros mejores deseos y agradecimientos por todas las líneas de código debuggeadas, las clases diarias y la paciencia infinita.
+Repositorio dedicado al **Profe Edwin** en el Día del Maestro. Hemos ejecutado un `git commit` masivo para desplegar nuestros mejores deseos y agradecimientos por todas las líneas de código debuggeadas, las clases diarias y la paciencia infinita.(Descarge el archivo y reviselo :) )
 
 ## 🚀 Log de Cambios (Changelog)
 * `feat(gracias)`: Despliegue de mensajes personalizados por el equipo de E2.
